@@ -6,13 +6,50 @@ It consists of three projects:
 
 - `backend`: A Spring Boot 3 REST API that generates one‑time passwords, stores them in memory, sends them via Mailosaur's SMTP service, and verifies the code to reveal a dummy password.
 - `otp-frontend`: A Vite/React app providing a login form with a “forgot password” modal. It calls the backend API to request an OTP, accepts the code from the user, and displays the password on success.
-- `otp-e2e`: A Playwright test suite (TypeScript) that drives the frontend and uses the Mailosaur API to read the OTP email automatically, then fills the code into the UI and asserts that the password appears.
-
+- `otp-e2e`: A Playwright test suite (TypeScript) that drives the frontend and uses the Mailosaur API to read the OTP email automatically, then fills the code into the UI and asserts that the password appears
 ## Prerequisites
 
 - Java 17+ and Maven 3.x for the backend.
 - Node.js 18+ and npm for the frontend and tests.
-- A Mailosaur account with a server created. You will need:
+  
+ ## Running with Docker Compose
+
+If you prefer to run the whole demo without installing Java or Node locally, you can use the provided `docker-compose.yml` to build and start both the backend and frontend together.
+
+1. Make sure Docker and Docker Compose are installed.
+2. Export your Mailosaur credentials and test email as environment variables, then run Docker Compose:
+
+```bash
+export MAILOSAUR_SMTP_USERNAME=<your server id>
+export MAILOSAUR_SMTP_PASSWORD=<your SMTP password>
+export MAILOSAUR_SERVER_ID=<your server id>
+export MAILOSAUR_API_KEY=<your API key>
+export TEST_EMAIL=<your test email>
+export MAIL_SUBJECT="[Demo] Your OTP Code"
+
+docker-compose up --build
+```
+
+This builds the Spring Boot backend and the Vite frontend and starts them. Once running, visit `http://localhost:5173` to use the demo. The backend API is available at `http://localhost:8080`.
+
+To run the end-to-end tests against the live services, open another terminal and run:
+
+```bash
+cd otp-e2e
+npm install
+npx playwright install --with-deps
+npx playwright test --headed
+```
+
+The `--headed` flag shows the browser UI during the test.
+
+When you're finished, stop the services with:
+
+```bash
+docker-compose down
+```
+
+ Mailosaur account with a server created. You will need:
   - SMTP username and password (server ID and SMTP password) for sending emails.
   - API key and server ID for reading emails.
   - A test email address in the form `<anything>@<serverId>.mailosaur.net`.
