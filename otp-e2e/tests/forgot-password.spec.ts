@@ -16,18 +16,24 @@ const extractOtp = (text: string) => {
 test("비밀번호 찾기: 메일로 받은 OTP로 비밀번호 노출", async ({ page }) => {
   const mailosaur = new Mailosaur(apiKey);
 
+  // 과거 메일로 인한 잘못된 OTP 추출 방지
+  await mailosaur.messages.deleteAll(serverId);
+
   await page.goto("/");
   await page.getByTestId("login-email").fill(testEmail);
   await page.getByTestId("forgot-button").click();
 
   await page.getByTestId("fp-email").fill(testEmail);
+
+  const start = new Date();
   await page.getByTestId("send-otp").click();
 
-  // Wait for the email to arrive and extract OTP
-  const message = await mailosaur.messages.get(serverId, {
-    sentTo: testEmail,
-    subject
-  }, { timeout: 30_000 });
+  // 최신 수신 메일에서 OTP 추출
+  const message = await mailosaur.messages.get(
+    serverId,
+    { sentTo: testEmail, subject },
+    { timeout: 30_000, receivedAfter: start as any }
+  );
 
   const body = (message.text?.body || message.html?.body || "");
   const otp = extractOtp(body);
@@ -36,5 +42,5 @@ test("비밀번호 찾기: 메일로 받은 OTP로 비밀번호 노출", async (
   await page.getByTestId("confirm-otp").click();
 
   const revealed = page.getByTestId("revealed-password");
-  await expect(revealed).toContainText("당신의 비밀번호:");
+  await expect(revealed).toContainText("당신의 비밀번호:", { timeout: 15_000 });
 });
