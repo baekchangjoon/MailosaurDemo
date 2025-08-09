@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      MAILOSAUR_SMTP_USERNAME: ${{ secrets.MAILOSAUR_SMTP_USERNAME }}
+      MAILOSAUR_SMTP_PASSWORD: ${{ secrets.MAILOSAUR_SMTP_PASSWORD }}
+      MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+      MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+      MAIL_SUBJECT: ${{ secrets.MAIL_SUBJECT }}
+      VITE_BACKEND_URL: http://localhost:8080
+      SPRING_MVC_CORS_ALLOWED_ORIGINS: http://localhost:5173
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Build and start services
+      run: docker-compose up -d --build
+
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for backend and frontend to start..."
+        sleep 30
+
+    - name: Install Playwright and dependencies
+      run: |
+        cd otp-e2e
+        npm install
+        npx playwright install --with-deps
+
+    - name: Run Playwright tests (headful)
+      run: |
+        cd otp-e2e
+        npx playwright test --headed
+
+    - name: Shutdown services
+      if: always()
+      run: docker-compose down
