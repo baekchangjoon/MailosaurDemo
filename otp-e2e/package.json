@@ -1,0 +1,12 @@
+{
+  "name": "otp-e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "dotenv": "^16.4.5",
+    "mailosaur": "^8.3.0"
+  }
+}
