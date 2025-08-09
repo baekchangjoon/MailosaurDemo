@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    environment: Mailosaur
     env:
       MAILOSAUR_SMTP_USERNAME: ${{ secrets.MAILOSAUR_SMTP_USERNAME }}
       MAILOSAUR_SMTP_PASSWORD: ${{ secrets.MAILOSAUR_SMTP_PASSWORD }}
@@ -47,10 +48,10 @@ jobs:
         npm install
         npx playwright install --with-deps
 
-    - name: Run Playwright tests (headful)
+    - name: Run Playwright tests (headless)
       run: |
         cd otp-e2e
-        npx playwright test --headed
+        npx playwright test
 
     - name: Shutdown services
       if: always()

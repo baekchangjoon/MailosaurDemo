@@ -5,7 +5,7 @@ dotenv.config();
 export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:5173",
-    headless: false,
+    headless: true,
     launchOptions: {
       slowMo: 1000
     }
