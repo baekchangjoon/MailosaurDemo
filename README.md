@@ -12,7 +12,7 @@ It consists of three projects:
 - Java 17+ and Maven 3.x for the backend.
 - Node.js 18+ and npm for the frontend and tests.
   
- ## Running with Docker Compose
+## Running with Docker Compose
 
 If you prefer to run the whole demo without installing Java or Node locally, you can use the provided `docker-compose.yml` to build and start both the backend and frontend together.
 
@@ -113,3 +113,63 @@ Ensure the backend and frontend are running before executing the Playwright test
 ---
 
 This demo illustrates how Mailosaur can simplify testing of email‑based verification flows by providing disposable addresses, SMTP sending and a powerful API for retrieving and asserting email content.
+
+## Manual run (without Docker Compose)
+
+You can run the backend and frontend locally in two terminals.
+
+1) Backend (Spring Boot)
+
+```bash
+# In a new terminal
+export MAILOSAUR_SMTP_USERNAME=<your server id>@mailosaur.net
+export MAILOSAUR_SMTP_PASSWORD=<your SMTP password>
+cd backend
+mvn clean spring-boot:run
+# backend runs at http://localhost:8080
+```
+
+2) Frontend (Vite/React)
+
+```bash
+# In another terminal
+cd otp-frontend
+npm install
+# Point the frontend to the backend
+VITE_BACKEND_URL=http://localhost:8080 npm run dev
+# visit http://localhost:5173
+```
+
+3) Manual demo flow
+
+- Open the page at `http://localhost:5173`
+- Enter your Mailosaur test address (e.g. `anything@<serverId>.mailosaur.net`)
+- Click “비밀번호 찾기” → in the modal click “인증 번호 받기”
+- Retrieve the OTP from the mailbox (or run the Playwright test below), type it into “인증번호”, then click “확인”
+- The password text should appear under the OTP input
+
+## End‑to‑end tests with Playwright (headful)
+
+The `otp-e2e` project contains a Playwright test that automates the forgot‑password flow.
+
+1. Prepare env file (either fill the existing `otp-e2e/.env` or create one):
+
+   ```
+   BASE_URL=http://localhost:5173
+   MAILOSAUR_API_KEY=ms_xxxxxxxxxxxxxxxxxxxx
+   MAILOSAUR_SERVER_ID=yourServerId
+   TEST_EMAIL=test@yourServerId.mailosaur.net
+   MAIL_SUBJECT=[Demo] Your OTP Code
+   ```
+
+2. With backend and frontend running, execute the test headfully:
+
+   ```bash
+   cd otp-e2e
+   npm install
+   npx playwright install --with-deps
+   npx playwright test --headed
+   ```
+
+Notes:
+- On some Linux distros you may need system packages for Chromium (GTK, X11 libs). If `--with-deps` is not available, install your distro’s browser dependencies or use the official Playwright Docker image.

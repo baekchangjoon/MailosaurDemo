@@ -1,0 +1,46 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Environment files (contain secrets)
+.env
+.env.*
+otp-e2e/.env
+
+# Node / TypeScript / React / Vite
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+.vite/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Playwright artifacts
+otp-e2e/test-results/
+otp-e2e/playwright-report/
+otp-e2e/blob-report/
+otp-e2e/**/trace.zip
+otp-e2e/**/screenshots/
+otp-e2e/**/videos/
+
+# Java / Maven (Spring Boot)
+target/
+*.class
+.classpath
+.project
+.settings/
+.factorypath
+
+# Logs
+*.log
+
+
