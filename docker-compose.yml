@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      MAILOSAUR_SMTP_USERNAME: ${MAILOSAUR_SMTP_USERNAME}
+      MAILOSAUR_SMTP_PASSWORD: ${MAILOSAUR_SMTP_PASSWORD}
+      MAILOSAUR_SERVER_ID: ${MAILOSAUR_SERVER_ID}
+      MAILOSAUR_API_KEY: ${MAILOSAUR_API_KEY}
+      SPRING_MVC_CORS_ALLOWED_ORIGINS: http://localhost:5173
+  frontend:
+    build:
+      context: ./otp-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_URL: http://localhost:8080
