@@ -2,6 +2,6 @@ import { defineConfig } from "@playwright/test";
 require("dotenv").config();
 
 export default defineConfig({
-  use: { baseURL: process.env.BASE_URL || "http://localhost:5173", headless: true },
+  use: { baseURL: process.env.BASE_URL || "http://localhost:5173", headless: false },
   timeout: 60_000
 });
