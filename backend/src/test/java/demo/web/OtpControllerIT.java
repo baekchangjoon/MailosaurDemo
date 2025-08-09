@@ -5,6 +5,7 @@ import demo.web.dto.SendOtpRequest;
 import demo.web.dto.VerifyOtpRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,7 +23,7 @@ class OtpControllerIT {
   @Autowired ObjectMapper om;
 
   @Test void sendAndVerifyFlow() throws Exception {
-    doNothing().when(sender).send(any());
+    doNothing().when(sender).send(any(SimpleMailMessage.class));
     mvc.perform(post("/api/otp/send")
       .contentType("application/json")
       .content(om.writeValueAsString(new SendOtpRequest("t@e.st"))))

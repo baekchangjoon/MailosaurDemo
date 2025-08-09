@@ -16,6 +16,8 @@ services:
   frontend:
     build:
       context: ./otp-frontend
+      args:
+        VITE_BACKEND_URL: http://localhost:8080
     ports:
       - "5173:5173"
     depends_on:
