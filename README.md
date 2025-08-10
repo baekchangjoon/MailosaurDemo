@@ -173,3 +173,32 @@ The `otp-e2e` project contains a Playwright test that automates the forgot‑pas
 
 Notes:
 - On some Linux distros you may need system packages for Chromium (GTK, X11 libs). If `--with-deps` is not available, install your distro’s browser dependencies or use the official Playwright Docker image.
+
+## Authenticator (TOTP) Flow
+
+In addition to email OTP, this demo also supports registering and using an Authenticator (TOTP) app (e.g., Google Authenticator) for password recovery.
+
+### Registering your Authenticator
+
+1. Click **비밀번호 찾기** and choose **Authenticator** as the method.
+2. Click **Authenticator 등록**. A QR code will appear in the modal.
+3. Scan the QR code with your Authenticator app to register.
+4. (Optional) After scanning, you can enter the current code into the **Authenticator 값 입력** field and click **확인** to verify.
+
+### Recovering your password using Authenticator
+
+1. In the **비밀번호 찾기** modal, choose **Authenticator**.
+2. Enter your email in the **메일 주소** field.
+3. Open your Authenticator app and note the current 6‑digit code.
+4. Enter the code into **Authenticator 값 입력** and click **확인**.
+5. The password will appear in the modal.
+
+### End-to-end tests with Playwright (Authenticator)
+
+Two new Playwright tests cover the Authenticator flow:
+
+- **totp-enroll.spec.ts**: Calls the TOTP `/enroll` and `/confirm` APIs, computes the code using Node's `crypto` library, and verifies registration.
+- **forgot-password-totp.spec.ts**: Automates the UI to recover the password using the Authenticator mode.
+
+These tests compute the TOTP code in-line, so no extra dependency is required.
+
